@@ -26,6 +26,12 @@ var srcFolder = flag.String("src", "", "Path to mtasa-blue git repository")
 var remoteRepo = flag.String("remote", "git@github.com:qaisjp/mtasa-blue", "Remote to push + send a pull request to")
 var prevRef = flag.String("prevref", "HEAD^", "the previous commit, which should be a reference to an object (tag, commit hash, branch, etc)")
 
+// Tool is the tool
+type Tool struct {
+	r   *git.Repository
+	src string
+}
+
 func main() {
 	flag.Parse()
 
@@ -40,12 +46,11 @@ func main() {
 		log.Fatalln("Could not open git repo:", err.Error())
 	}
 
-	ref, err := r.Head()
-	if err != nil {
-		log.Fatalln("Couldn't get HEAD reference")
-	}
+	t := Tool{r, path}
 
-	log.Println("It's", ref.String())
+	if err := t.run(); err != nil {
+		log.Fatalln(err.Error())
+	}
 }
 
 func checkSourceFolder(path string) error {
@@ -59,6 +64,17 @@ func checkSourceFolder(path string) error {
 	if !finfo.IsDir() {
 		return errors.New("expected directory, got file")
 	}
+
+	return nil
+}
+
+func (t *Tool) run() error {
+	ref, err := t.r.Head()
+	if err != nil {
+		log.Fatalln("Couldn't get HEAD reference")
+	}
+
+	log.Println("It's", ref.String())
 
 	return nil
 }
