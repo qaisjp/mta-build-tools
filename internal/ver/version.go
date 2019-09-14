@@ -6,14 +6,14 @@ import (
 )
 
 // This might
-type mtaVersion struct {
+type MtaVersion struct {
 	Major       int
 	Minor       int
 	Patch       int
 	BuildNumber int
 }
 
-func mtaVersionFromString(str string) (v mtaVersion) {
+func MtaVersionFromString(str string) (v MtaVersion) {
 	parts := strings.Split(str, "-")
 
 	ver := parts[0]
