@@ -11,8 +11,8 @@ import (
 // VersionItem matches SVersionItem in mtasa-blue
 // See https://github.com/multitheftauto/mtasa-blue/blob/2013c1fcdd2f9e5748bc1608fc6285c68e6a8991/Server/mods/deathmatch/logic/CResourceChecker.Data.h#L18
 type VersionItem struct {
-	functionName  string
-	minMtaVersion string
+	FunctionName  string
+	MinMtaVersion string
 }
 
 // ReadInitLists reads a file in the manner of Server/mods/deathmatch/logic/CResourceChecker.Data.h and spews out the appropriate init lists
@@ -92,9 +92,9 @@ func ReadInitLists(r io.Reader) (clientItems []VersionItem, serverItems []Versio
 
 			// And add to item appropriately
 			if i == 0 {
-				item.functionName = field
+				item.FunctionName = field
 			} else if i == 1 {
-				item.minMtaVersion = field
+				item.MinMtaVersion = field
 			} else {
 				panic("this should never be reached")
 			}
