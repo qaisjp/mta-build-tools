@@ -39,6 +39,9 @@ var dummyServerFuncNames = []string{
 
 	// Server/mods/deathmatch/logic/luadefs/CLuaCameraDefs.cpp
 	"getCameraMatrix", "getCameraTarget", "getCameraInterior", "setCameraMatrix", "setCameraTarget", "setCameraInterior", "fadeCamera",
+
+	// Shared/mods/deathmatch/logic/luadefs/CLuaBitDefs.cpp
+	"bitAnd", "bitNot", "bitOr", "bitTest", "bitXor", "bitLRotate", "bitRRotate", "bitLShift", "bitRShift", "bitArShift", "bitExtract", "bitReplace",
 }
 
 var dummyClientFuncNames = []string{
@@ -50,6 +53,9 @@ var dummyClientFuncNames = []string{
 
 	// Client/mods/deathmatch/logic/luadefs/CLuaClassDefs.cpp
 	// <none>
+
+	// Shared/mods/deathmatch/logic/luadefs/CLuaBitDefs.cpp
+	"bitAnd", "bitNot", "bitOr", "bitTest", "bitXor", "bitLRotate", "bitRRotate", "bitLShift", "bitRShift", "bitArShift", "bitExtract", "bitReplace",
 }
 
 var dummyFiles = map[string]string{
