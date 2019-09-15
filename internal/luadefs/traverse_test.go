@@ -10,10 +10,10 @@ import (
 func TestTraverse(t *testing.T) {
 	fs := dummyFS()
 
-	clientFuncs, serverFuncs, err := luadefs.ReadFuncs(fs)
+	clientDefs, serverDefs, err := luadefs.ReadFuncs(fs)
 	assert.NoError(t, err, "must be able to read the filesystem")
-	assert.NotNil(t, clientFuncs, "clientFuncs must exist")
-	assert.NotNil(t, serverFuncs, "serverFuncs must exist")
+	assert.NotNil(t, clientDefs, "clientDefs must exist")
+	assert.NotNil(t, serverDefs, "serverDefs must exist")
 
 	clientFuncNames := []string{}
 	serverFuncNames := []string{}
