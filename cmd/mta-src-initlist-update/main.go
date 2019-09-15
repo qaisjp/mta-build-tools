@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/multitheftauto/build-tools/internal/rescheck"
 	"github.com/multitheftauto/build-tools/internal/ver"
 	"github.com/pkg/errors"
 	"gopkg.in/src-d/go-git.v4"
@@ -54,8 +55,6 @@ func main() {
 	if err := t.run(); err != nil {
 		log.Fatalln(err.Error())
 	}
-
-	fmt.Println(t.getCurrentVersion())
 }
 
 func checkSourceFolder(path string) error {
@@ -79,7 +78,33 @@ func (t *Tool) run() error {
 		log.Fatalln("Couldn't get HEAD reference")
 	}
 
-	log.Println("It's", ref.String())
+	fmt.Println("repo is at:", ref.String())
+
+	ver, err := t.getCurrentVersion()
+	if err != nil {
+		log.Fatalln("Could not get current version:", err.Error())
+	}
+	fmt.Println("repo version is:", ver)
+
+	clientItems, serverItems, err := t.getInitLists()
+	if err != nil {
+		log.Fatalln("Could not read CResourceChecker.Data.h init lists:", err.Error())
+	}
+
+	// delClientItems, delServerItems, err := t.getInitLists()
+	dupes := findDuplicates(clientItems)
+	if len(dupes) == 0 {
+		fmt.Println("ok(client): no dupes")
+	} else {
+		fmt.Println("fail(client):  dupes found")
+	}
+
+	dupes = findDuplicates(serverItems)
+	if len(dupes) == 0 {
+		fmt.Println("ok(server): no dupes")
+	} else {
+		fmt.Println("fail(server):  dupes found")
+	}
 
 	return nil
 }
@@ -93,4 +118,15 @@ func (t *Tool) getCurrentVersion() (v ver.MtaVersion, err error) {
 	}
 
 	return ver.ReadVersionHeader(f)
+}
+
+func (t *Tool) getInitLists() (clientItems []rescheck.VersionItem, serverItems []rescheck.VersionItem, err error) {
+	path := filepath.Join(t.src, "Server/mods/deathmatch/logic/CResourceChecker.Data.h")
+
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return rescheck.ReadInitLists(f)
 }
