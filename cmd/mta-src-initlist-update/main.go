@@ -15,9 +15,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
+	"github.com/multitheftauto/build-tools/internal/ver"
 	"github.com/pkg/errors"
 	"gopkg.in/src-d/go-git.v4"
 )
@@ -51,6 +54,8 @@ func main() {
 	if err := t.run(); err != nil {
 		log.Fatalln(err.Error())
 	}
+
+	fmt.Println(t.getCurrentVersion())
 }
 
 func checkSourceFolder(path string) error {
@@ -79,6 +84,13 @@ func (t *Tool) run() error {
 	return nil
 }
 
-func (t *Tool) getCurrentVersion() {
+func (t *Tool) getCurrentVersion() (v ver.MtaVersion, err error) {
+	path := filepath.Join(t.src, "Shared/sdk/version.h")
 
+	f, err := os.Open(path)
+	if err != nil {
+		return v, err
+	}
+
+	return ver.ReadVersionHeader(f)
 }
