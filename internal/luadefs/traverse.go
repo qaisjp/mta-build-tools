@@ -13,8 +13,8 @@ import (
 	"gopkg.in/src-d/go-billy.v4"
 )
 
-// ReadFuncs traverses the filesystem and looks for lua definitions in the obvious places, returning all the definitions
-func ReadFuncs(fs billy.Filesystem) (defs []LuaDef, err error) {
+// FindFilesystemDefs traverses the filesystem and looks for lua definitions in the obvious places, returning all the definitions
+func FindFilesystemDefs(fs billy.Filesystem) (defs []LuaDef, err error) {
 	paths := map[string]FunctionType{
 		"Server/mods/deathmatch/logic/luadefs":             ServerFunctionType,
 		"Server/mods/deathmatch/logic/lua/CLuaManager.cpp": ServerFunctionType,
@@ -62,7 +62,7 @@ func ReadFuncs(fs billy.Filesystem) (defs []LuaDef, err error) {
 			return nil, errors.Wrap(err, "Could not open file: "+entry.fpath)
 		}
 
-		entrydefs, err := FindDefs(f, entry.ftype)
+		entrydefs, err := FindFileDefs(f, entry.ftype)
 		if err != nil {
 			return nil, errors.Wrap(err, "trouble reading "+entry.fpath)
 		}
@@ -75,8 +75,8 @@ func ReadFuncs(fs billy.Filesystem) (defs []LuaDef, err error) {
 	return defs, nil
 }
 
-// FindDefs reads a file and spits out the associated function definitions
-func FindDefs(r io.Reader, ftype FunctionType) (defs []LuaDef, err error) {
+// FindFileDefs reads a file and spits out the associated function definitions
+func FindFileDefs(r io.Reader, ftype FunctionType) (defs []LuaDef, err error) {
 	// Recover in case of indexing error
 	defer func() {
 		if r := recover(); r != nil {

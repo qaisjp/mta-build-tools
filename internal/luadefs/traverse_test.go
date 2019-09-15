@@ -11,7 +11,7 @@ import (
 func TestTraverse(t *testing.T) {
 	fs := dummyFS()
 
-	defs, err := luadefs.ReadFuncs(fs)
+	defs, err := luadefs.FindFilesystemDefs(fs)
 	require.NoError(t, err, "must be able to read the filesystem")
 	require.NotNil(t, defs, "defs must exist")
 
