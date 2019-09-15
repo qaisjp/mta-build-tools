@@ -16,11 +16,11 @@ import (
 // ReadFuncs traverses the filesystem and looks for lua definitions in the obvious places, returning all the definitions
 func ReadFuncs(fs billy.Filesystem) (defs []LuaDef, err error) {
 	paths := map[string]FunctionType{
-		"Server/mods/deathmatch/logic/luadefs":                 ServerFunctionType,
-		"Server/mods/deathmatch/logic/lua/CLuaManager.cpp":     ServerFunctionType,
-		"Client/mods/deathmatch/logic/luadefs":                 ClientFunctionType,
-		"Client/mods/deathmatch/logic/lua/CLuaManager.cpp":     ClientFunctionType,
-		"Shared/mods/deathmatch/logic/luadefs/CLuaBitDefs.cpp": SharedFunctionType,
+		"Server/mods/deathmatch/logic/luadefs":             ServerFunctionType,
+		"Server/mods/deathmatch/logic/lua/CLuaManager.cpp": ServerFunctionType,
+		"Client/mods/deathmatch/logic/luadefs":             ClientFunctionType,
+		"Client/mods/deathmatch/logic/lua/CLuaManager.cpp": ClientFunctionType,
+		"Shared/mods/deathmatch/logic/luadefs":             SharedFunctionType,
 	}
 
 	// populate file lists
