@@ -883,11 +883,13 @@ void CLuaManager::LoadCFunctions()
 		{"isPlayerInWater", CLuaElementDefs::IsElementInWater},
 		{"isPedInWater", CLuaElementDefs::IsElementInWater},
 		{"isPedOnFire", CLuaPedDefs::IsPedOnFire},
+		/* a bunch of crap here
+		and some more heree!!! */
 		{"setPedOnFire", CLuaPedDefs::SetPedOnFire},
 		{"isPlayerOnGround", CLuaPedDefs::IsPedOnGround},
 		{"getPlayerTask", CLuaPedDefs::GetPedTask},
 		{"getPlayerSimplestTask", CLuaPedDefs::GetPedSimplestTask},
-		{"isPlayerDoingTask", CLuaPedDefs::IsPedDoingTask},
+		{"isPlayerDoingTask", CLuaPedDefs::IsPedDoingTask}, // introduced in 1.5.5-9.13846
 		{"getPlayerTarget", CLuaPedDefs::GetPedTarget},
 		{"getPlayerTargetStart", CLuaPedDefs::GetPedTargetStart},
 		{"getPlayerTargetEnd", CLuaPedDefs::GetPedTargetEnd},

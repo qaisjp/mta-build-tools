@@ -20,6 +20,10 @@ func ExtractPair(line string, secondQuote bool) (pair []string, err error) {
 		return nil, nil
 	}
 
+	// Split off any extra comments (and space between)
+	line = strings.Split(line, "//")[0]
+	line = strings.TrimSpace(line)
+
 	// Trim a single trailing comma, for normalisation sake
 	// Example: `{"toJSON", "1.1.1"},` becomes `{"toJSON", "1.1.1"}`
 	n := len(line)

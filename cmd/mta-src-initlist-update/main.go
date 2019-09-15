@@ -20,9 +20,12 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/multitheftauto/build-tools/internal/luadefs"
 	"github.com/multitheftauto/build-tools/internal/rescheck"
 	"github.com/multitheftauto/build-tools/internal/ver"
+
 	"github.com/pkg/errors"
+	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
 )
 
@@ -105,6 +108,13 @@ func (t *Tool) run() error {
 	} else {
 		fmt.Println("fail(server):  dupes found")
 	}
+
+	defs, err := luadefs.FindFilesystemDefs(osfs.New(t.src))
+	if err != nil {
+		log.Fatalln("Failed whilst iterating filesystem", err.Error())
+	}
+
+	fmt.Printf("ok: scanned %d functions\n", len(defs))
 
 	return nil
 }
