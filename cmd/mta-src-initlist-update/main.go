@@ -25,8 +25,8 @@ import (
 	"github.com/multitheftauto/build-tools/internal/ver"
 
 	"github.com/pkg/errors"
-	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 var srcFolder = flag.String("src", "", "Path to mtasa-blue git repository")
@@ -76,12 +76,18 @@ func checkSourceFolder(path string) error {
 }
 
 func (t *Tool) run() error {
-	ref, err := t.r.Head()
+	headRef, err := t.r.Head()
 	if err != nil {
 		log.Fatalln("Couldn't get HEAD reference")
 	}
 
-	fmt.Println("repo is at:", ref.String())
+	fmt.Println("repo is at:", headRef.String())
+
+	// Resolve revision
+	prevHash, err := t.r.ResolveRevision(plumbing.Revision(*prevRef))
+	if err != nil {
+		log.Fatalln("Could not resolve prevref", err.Error())
+	}
 
 	ver, err := t.getCurrentVersion()
 	if err != nil {
@@ -109,12 +115,41 @@ func (t *Tool) run() error {
 		fmt.Println("fail(server):  dupes found")
 	}
 
-	defs, err := luadefs.FindFilesystemDefs(osfs.New(t.src))
+	worktree, err := t.r.Worktree()
 	if err != nil {
-		log.Fatalln("Failed whilst iterating filesystem", err.Error())
+		log.Fatalln(errors.Wrap(err, "could not checkout worktree"))
 	}
 
-	fmt.Printf("ok: scanned %d functions\n", len(defs))
+	headDefs, err := luadefs.FindFilesystemDefs(worktree.Filesystem)
+	if err != nil {
+		log.Fatalln("Failed whilst iterating head filesystem", err.Error())
+	}
+
+	fmt.Printf("ok(HEAD): scanned %d functions\n", len(headDefs))
+
+	fmt.Printf("checking out %s (%s)...\n", *prevRef, prevHash.String())
+	if err := worktree.Checkout(&git.CheckoutOptions{
+		Hash:  *prevHash,
+		Force: true,
+	}); err != nil {
+		log.Fatalf("Could not checkout worktree of prevhash (%s): %s\n", prevHash.String(), err.Error())
+	}
+
+	prevDefs, err := luadefs.FindFilesystemDefs(worktree.Filesystem)
+	if err != nil {
+		log.Fatalln("Failed whilst iterating prevhash filesystem", err.Error())
+	}
+
+	fmt.Printf("ok(prevref): scanned %d functions\n", len(prevDefs))
+
+	// Return to original
+	fmt.Printf("checking out original commit (%s)...\n", headRef.String())
+	if err := worktree.Checkout(&git.CheckoutOptions{
+		Branch: headRef.Name(),
+		Force:  true,
+	}); err != nil {
+		log.Fatalf("Could not checkout worktree of head (%s): %s\n", headRef.String(), err.Error())
+	}
 
 	return nil
 }
