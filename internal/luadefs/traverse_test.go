@@ -1,28 +1,33 @@
 package luadefs_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/multitheftauto/build-tools/internal/luadefs"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTraverse(t *testing.T) {
 	fs := dummyFS()
 
 	defs, err := luadefs.ReadFuncs(fs)
-	assert.NoError(t, err, "must be able to read the filesystem")
-	assert.NotNil(t, defs, "defs must exist")
+	require.NoError(t, err, "must be able to read the filesystem")
+	require.NotNil(t, defs, "defs must exist")
 
 	clientFuncNames := []string{}
 	serverFuncNames := []string{}
 
 	for _, d := range defs {
+		fmt.Println("ok")
 		if d.OnClient() {
+			fmt.Println("c", d)
 			clientFuncNames = append(clientFuncNames, d.FunctionName)
 		}
 		if d.OnServer() {
-			clientFuncNames = append(serverFuncNames, d.FunctionName)
+			fmt.Println("s", d)
+			serverFuncNames = append(serverFuncNames, d.FunctionName)
 		}
 	}
 

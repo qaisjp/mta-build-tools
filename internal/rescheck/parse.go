@@ -5,6 +5,8 @@ import (
 	"io"
 	"strings"
 
+	"github.com/multitheftauto/build-tools/internal"
+
 	"github.com/pkg/errors"
 )
 
@@ -52,55 +54,14 @@ func ReadInitLists(r io.Reader) (clientItems []VersionItem, serverItems []Versio
 			continue
 		}
 
-		// Trim a single trailing comma, for normalisation sake
-		// Example: `{"toJSON", "1.1.1"},` becomes `{"toJSON", "1.1.1"}`
-		n := len(trimText)
-		if trimText[n-1] == ',' {
-			trimText = trimText[:n-1]
-			n--
+		pair, err := internal.ExtractPair(trimText, true)
+		if err != nil {
+			return nil, nil, err
 		}
 
-		// Error if first and last are not curly braces
-		if trimText[0] != '{' && trimText[n-1] != '}' {
-			return nil, nil, errors.New("Unexpected line `" + strings.TrimSpace(text) + "`")
+		if pair != nil {
+			*currList = append(*currList, VersionItem{pair[0], pair[1]})
 		}
-
-		// Trim surrounding curly braces
-		// Example: `{"toJSON", "1.1.1"}` becomes `"toJSON", "1.1.1"`
-		trimText = trimText[1 : n-1]
-		n--
-
-		// Split by comma, and validate length
-		fields := strings.Split(trimText, ",")
-		if len(fields) != 2 {
-			return nil, nil, errors.New("Unexpected line `" + strings.TrimSpace(text) + "`")
-		}
-
-		// Trim spaces, ensure encapsulated in quotes, and add to init list
-		item := VersionItem{}
-		for i, field := range fields {
-			field := strings.TrimSpace(field)
-
-			// Ensure quote is valid
-			quote := field[0]
-			if quote != '\'' && quote != '"' && field[len(field)-1] != quote {
-				return nil, nil, errors.New("Badly quoted line `" + strings.TrimSpace(text) + "`")
-			}
-
-			// Extract field content
-			field = field[1 : len(field)-1]
-
-			// And add to item appropriately
-			if i == 0 {
-				item.FunctionName = field
-			} else if i == 1 {
-				item.MinMtaVersion = field
-			} else {
-				panic("this should never be reached")
-			}
-		}
-
-		*currList = append(*currList, item)
 	}
 
 	if err := s.Err(); err != nil {
