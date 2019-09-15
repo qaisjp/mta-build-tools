@@ -55,7 +55,7 @@ func ReadInitLists(r io.Reader) (clientItems []VersionItem, serverItems []Versio
 		// Trim a single trailing comma, for normalisation sake
 		// Example: `{"toJSON", "1.1.1"},` becomes `{"toJSON", "1.1.1"}`
 		n := len(trimText)
-		if trimText[n] == ',' {
+		if trimText[n-1] == ',' {
 			trimText = trimText[:n-1]
 			n--
 		}
@@ -107,5 +107,5 @@ func ReadInitLists(r io.Reader) (clientItems []VersionItem, serverItems []Versio
 		return nil, nil, err
 	}
 
-	return nil, nil, nil
+	return
 }
