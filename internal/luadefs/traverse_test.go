@@ -26,6 +26,6 @@ func TestTraverse(t *testing.T) {
 		}
 	}
 
-	assert.ElementsMatch(t, dummyClientFuncNames, clientFuncNames)
-	assert.ElementsMatch(t, dummyServerFuncNames, serverFuncNames)
+	assert.ElementsMatch(t, dummyClientFuncNames, clientFuncNames, "client funcs should match")
+	assert.ElementsMatch(t, dummyServerFuncNames, serverFuncNames, "server funcs should match")
 }
