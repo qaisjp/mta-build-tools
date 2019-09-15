@@ -4,6 +4,11 @@ package luadefs
 type LuaDef struct {
 	FunctionName string
 	Type         FunctionType
+
+	// Extensions:
+	// Class string
+	// SourcePath string
+	// Documentation string
 }
 
 // OnClient tells you if this definition is available client-side
