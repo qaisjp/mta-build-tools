@@ -8,7 +8,7 @@ import (
 	"gopkg.in/src-d/go-billy.v4/memfs"
 )
 
-func dummyFS() *billy.Filesystem {
+func dummyFS() billy.Filesystem {
 	f := memfs.New()
 
 	// Create all the files
@@ -24,7 +24,7 @@ func dummyFS() *billy.Filesystem {
 		Must(file.Close())
 	}
 
-	return &f
+	return f
 }
 
 func Must(err error) {
