@@ -3,7 +3,6 @@ package luadefs
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"path"
 	"strings"
@@ -67,10 +66,8 @@ func ReadFuncs(fs billy.Filesystem) (defs []LuaDef, err error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "trouble reading "+entry.fpath)
 		}
-		fmt.Println(entrydefs, entry)
 
 		for _, def := range entrydefs {
-			fmt.Println(def)
 			defs = append(defs, def)
 		}
 	}
@@ -95,15 +92,12 @@ func FindDefs(r io.Reader, ftype FunctionType) (defs []LuaDef, err error) {
 		text := strings.TrimSpace(s.Text())
 
 		if strings.HasSuffix(text, "*/") {
-			fmt.Println("endcomm", text)
 			commentFound = false
 			continue
 		} else if strings.HasPrefix(text, "/*") || commentFound {
-			fmt.Println("comm", text)
 			commentFound = true
 			continue
 		}
-		fmt.Println(text)
 
 		if text == "std::map<const char*, lua_CFunction> functions{" {
 			defs = []LuaDef{}
@@ -114,7 +108,6 @@ func FindDefs(r io.Reader, ftype FunctionType) (defs []LuaDef, err error) {
 			if err != nil {
 				return nil, err
 			} else if pair != nil {
-				fmt.Println(pair)
 				defs = append(defs, LuaDef{pair[0], ftype})
 			}
 		}

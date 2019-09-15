@@ -1,7 +1,6 @@
 package luadefs_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/multitheftauto/build-tools/internal/luadefs"
@@ -20,13 +19,10 @@ func TestTraverse(t *testing.T) {
 	serverFuncNames := []string{}
 
 	for _, d := range defs {
-		fmt.Println("ok")
 		if d.OnClient() {
-			fmt.Println("c", d)
 			clientFuncNames = append(clientFuncNames, d.FunctionName)
 		}
 		if d.OnServer() {
-			fmt.Println("s", d)
 			serverFuncNames = append(serverFuncNames, d.FunctionName)
 		}
 	}
