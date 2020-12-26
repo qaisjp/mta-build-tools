@@ -13,3 +13,15 @@ const (
 	// ServerFunctionType is a server-side function
 	ServerFunctionType
 )
+
+func (t FunctionType) String() (str string) {
+	switch t {
+	case SharedFunctionType:
+		str = "shared"
+	case ClientFunctionType:
+		str = "client"
+	case ServerFunctionType:
+		str = "server"
+	}
+	return
+}

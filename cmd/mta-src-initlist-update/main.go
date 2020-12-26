@@ -142,6 +142,13 @@ func (t *Tool) run() error {
 
 	fmt.Printf("ok(prevref): scanned %d functions\n", len(prevDefs))
 
+	fmt.Println("Finding new definitions (diffing)...")
+	extras := diffDefs(headDefs, prevDefs)
+	for _, def := range extras {
+		fmt.Printf("- %s (%s)\n", def.FunctionName, def.Type)
+	}
+	fmt.Println()
+
 	// Return to original
 	fmt.Printf("checking out original commit (%s)...\n", headRef.String())
 	if err := worktree.Checkout(&git.CheckoutOptions{
@@ -152,6 +159,22 @@ func (t *Tool) run() error {
 	}
 
 	return nil
+}
+
+// diffDefs returns a - b
+func diffDefs(a []luadefs.LuaDef, b []luadefs.LuaDef) (diff []luadefs.LuaDef) {
+	m := make(map[luadefs.LuaDef]bool)
+
+	for _, item := range b {
+		m[item] = true
+	}
+
+	for _, item := range a {
+		if _, ok := m[item]; !ok {
+			diff = append(diff, item)
+		}
+	}
+	return
 }
 
 func (t *Tool) getCurrentVersion() (v ver.MtaVersion, err error) {
